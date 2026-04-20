@@ -233,13 +233,6 @@
 /home/jacob/star_fuel_ws/build/FUEL/uav_simulator/Utils/pose_utils/CMakeFiles/edit_cache.dir
 /home/jacob/star_fuel_ws/build/FUEL/uav_simulator/Utils/pose_utils/CMakeFiles/test.dir
 /home/jacob/star_fuel_ws/build/FUEL/uav_simulator/Utils/pose_utils/CMakeFiles/pose_utils.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/install/strip.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/install/local.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/install.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/list_install_components.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/rebuild_cache.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/edit_cache.dir
-/home/jacob/star_fuel_ws/build/FUEL/fuel_planner/exploration_data/CMakeFiles/test.dir
 /home/jacob/star_fuel_ws/build/FUEL/uav_simulator/so3_disturbance_generator/CMakeFiles/install/strip.dir
 /home/jacob/star_fuel_ws/build/FUEL/uav_simulator/so3_disturbance_generator/CMakeFiles/dynamic_reconfigure_generate_messages_cpp.dir
 /home/jacob/star_fuel_ws/build/FUEL/uav_simulator/so3_disturbance_generator/CMakeFiles/dynamic_reconfigure_generate_messages_eus.dir

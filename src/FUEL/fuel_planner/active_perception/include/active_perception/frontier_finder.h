@@ -7,6 +7,9 @@
 #include <vector>
 #include <list>
 #include <utility>
+#include <string>
+#include <visualization_msgs/Marker.h>
+#include <queue>
 
 using Eigen::Vector3d;
 using std::shared_ptr;
@@ -14,6 +17,8 @@ using std::unique_ptr;
 using std::vector;
 using std::list;
 using std::pair;
+using std::priority_queue;
+using std::string;
 
 class RayCaster;
 
@@ -77,8 +82,8 @@ public:
   FrontierFinder(const shared_ptr<EDTEnvironment>& edt, ros::NodeHandle& nh);
   ~FrontierFinder();
 
-  //void searchFrontiers(Eigen::Vector3d cur_pos);
-  void searchFrontiers();
+  void searchFrontiers(Eigen::Vector3d cur_pos);
+  // void searchFrontiers();
   //void computeFrontiersToVisit(Eigen::Vector3d cur_pos);
   void computeFrontiersToVisit();
   void computeNormal(const vector<Vector3d> &point_cloud,
@@ -131,117 +136,64 @@ public:
   shared_ptr<PerceptionUtils> percep_utils_;
 
 private:
-  // void splitLargeFrontiers(vector<Frontier> &frontiers);
-  // bool splitIn3D(const Frontier &frontier, vector<Frontier> &splits);
-  // bool splitHorizontally(const Frontier &frontier, vector<Frontier> &splits);
-  // void mergeFrontiers(Frontier &ftr1, const Frontier &ftr2);
-  // bool isFrontierChanged(const Frontier &ft);
-  // bool haveOverlap(const Vector3d &min1, const Vector3d &max1,
-  //                  const Vector3d &min2, const Vector3d &max2);
-  // void computeFrontierInfo(Frontier &frontier);
-  // void downsample(const vector<Vector3d> &cluster_in,
-  //                 vector<Vector3d> &cluster_out);
-  // void sampleViewpoints(Frontier &frontier);
-  // int countVisibleCells(const Vector3d &pos, const double &yaw,
-  //                       const vector<Vector3d> &cluster, const int ftr_type,
-  //                       bool draw);
-  // bool isNearObstacle(const Vector3d &pos);
+  void splitLargeFrontiers(vector<Frontier> &frontiers);
+  bool splitIn3D(const Frontier &frontier, vector<Frontier> &splits);
+  bool splitHorizontally(const Frontier &frontier, vector<Frontier> &splits);
+  void mergeFrontiers(Frontier &ftr1, const Frontier &ftr2);
+  bool isFrontierChanged(const Frontier &ft);
+  bool haveOverlap(const Vector3d &min1, const Vector3d &max1,
+                   const Vector3d &min2, const Vector3d &max2);
+  void computeFrontierInfo(Frontier &frontier);
+  void downsample(const vector<Vector3d> &cluster_in,
+                  vector<Vector3d> &cluster_out);
+  void sampleViewpoints(Frontier &frontier);
+  int countVisibleCells(const Vector3d &pos, const double &yaw,
+                        const vector<Vector3d> &cluster, const int ftr_type,
+                        bool draw);
+  bool isNearObstacle(const Vector3d &pos);
 
-  // vector<Eigen::Vector3i> sixNeighbors(const Eigen::Vector3i &voxel);
-  // vector<Eigen::Vector3i> tenNeighbors(const Eigen::Vector3i &voxel);
-  // vector<Eigen::Vector3i> allNeighbors(const Eigen::Vector3i &voxel);
-  // bool isNeighborUnknown(const Eigen::Vector3i &voxel);
-  // bool isNeighborUnderObserved(const Eigen::Vector3i &voxel);
-  // void expandFrontier(const Eigen::Vector3i &
-  //                         first /* , const int& depth, const int& parent_id */);
-  // void findTopNCost(const vector<double> cost, int N,
-  //                   priority_queue<pair<double, int>, vector<pair<double, int>>,
-  //                                  CompareCost> &result);
-  // void fillBasicInfo(visualization_msgs::Marker &mk,
-  //                    const Eigen::Vector3d &scale, const Eigen::Vector4d &color,
-  //                    const string &ns, const int &id, const int &shape);
-  // void drawBox(const Eigen::Vector3d &center, const Eigen::Vector3d &scale,
-  //              const Eigen::Vector4d &color, const string &ns, const int &id);
-  // void drawText(const Eigen::Vector3d &pos, const string &text,
-  //               const double &scale, const Eigen::Vector4d &color,
-  //               const string &ns, const int &id);
-  // // Wrapper of sdf map
-  // int toadr(const Eigen::Vector3i &idx);
-  // bool knownfree(const Eigen::Vector3i &idx);
-  // bool inmap(const Eigen::Vector3i &idx);
-
-  // // Deprecated
-  // Eigen::Vector3i searchClearVoxel(const Eigen::Vector3i &pt);
-  // bool isInBoxes(const vector<pair<Vector3d, Vector3d>> &boxes,
-  //                const Eigen::Vector3i &idx);
-  // bool canBeMerged(const Frontier &ftr1, const Frontier &ftr2);
-  // void findViewpoints(const Vector3d &sample, const Vector3d &ftr_avg,
-  //                     vector<Viewpoint> &vps);
-  // Eigen::Vector4d getColor(const double &h, double alpha);
-  // // Data
-  // vector<char> frontier_flag_;
-  // vector<Frontier> frontiers_, dormant_frontiers_, tmp_frontiers_;
-  // vector<int> removed_ids_;
-  // vector<int> removed_cluster_ids_;
-  // //int first_new_frt_;
-  // vector<Frontier>::iterator first_new_ftr_;
-  // int frts_num_after_remove_;
-  // Frontier next_frontier_;
-  // vector<FrontierCluster> frontier_clusters_;
-  // vector<checkPoint> check_tour;
-
-  // // Params
-  // int cluster_min_;
-  // double cluster_size_xy_, cluster_size_z_;
-  // double candidate_rmax_, candidate_rmin_, candidate_dphi_, min_candidate_dist_,
-  //     min_candidate_clearance_;
-  // int down_sample_;
-  // double min_view_finish_fraction_, resolution_;
-  // int min_visib_num_, candidate_rnum_;
-  // double division_ratio_;
-  // string tsp_dir_;
-  // double frt_cluster_radius_;
-
-  // // Utils
-  // ros::Publisher debug_pts_, debug_marker_, debug_pts1_;
-  // shared_ptr<EDTEnvironment> edt_env_;
-  // unique_ptr<RayCaster> raycaster_;
-
-   void splitLargeFrontiers(list<Frontier>& frontiers);
-  bool splitHorizontally(const Frontier& frontier, list<Frontier>& splits);
-  void mergeFrontiers(Frontier& ftr1, const Frontier& ftr2);
-  bool isFrontierChanged(const Frontier& ft);
-  bool haveOverlap(const Vector3d& min1, const Vector3d& max1, const Vector3d& min2,
-                   const Vector3d& max2);
-  void computeFrontierInfo(Frontier& frontier);
-  void downsample(const vector<Vector3d>& cluster_in, vector<Vector3d>& cluster_out);
-  void sampleViewpoints(Frontier& frontier);
-
-  int countVisibleCells(const Vector3d& pos, const double& yaw, const vector<Vector3d>& cluster);
-  bool isNearUnknown(const Vector3d& pos);
-  vector<Eigen::Vector3i> sixNeighbors(const Eigen::Vector3i& voxel);
-  vector<Eigen::Vector3i> tenNeighbors(const Eigen::Vector3i& voxel);
-  vector<Eigen::Vector3i> allNeighbors(const Eigen::Vector3i& voxel);
-  bool isNeighborUnknown(const Eigen::Vector3i& voxel);
-  void expandFrontier(const Eigen::Vector3i& first /* , const int& depth, const int& parent_id */);
-
+  vector<Eigen::Vector3i> sixNeighbors(const Eigen::Vector3i &voxel);
+  vector<Eigen::Vector3i> tenNeighbors(const Eigen::Vector3i &voxel);
+  vector<Eigen::Vector3i> allNeighbors(const Eigen::Vector3i &voxel);
+  bool isNeighborUnknown(const Eigen::Vector3i &voxel);
+  bool isNeighborUnderObserved(const Eigen::Vector3i &voxel);
+  void expandFrontier(const Eigen::Vector3i &
+                          first /* , const int& depth, const int& parent_id */);
+  void findTopNCost(const vector<double> cost, int N,
+                    priority_queue<pair<double, int>, vector<pair<double, int>>,
+                                   CompareCost> &result);
+  void fillBasicInfo(visualization_msgs::Marker &mk,
+                     const Eigen::Vector3d &scale, const Eigen::Vector4d &color,
+                     const string &ns, const int &id, const int &shape);
+  void drawBox(const Eigen::Vector3d &center, const Eigen::Vector3d &scale,
+               const Eigen::Vector4d &color, const string &ns, const int &id);
+  void drawText(const Eigen::Vector3d &pos, const string &text,
+                const double &scale, const Eigen::Vector4d &color,
+                const string &ns, const int &id);
   // Wrapper of sdf map
-  int toadr(const Eigen::Vector3i& idx);
-  bool knownfree(const Eigen::Vector3i& idx);
-  bool inmap(const Eigen::Vector3i& idx);
+  int toadr(const Eigen::Vector3i &idx);
+  bool knownfree(const Eigen::Vector3i &idx);
+  bool inmap(const Eigen::Vector3i &idx);
 
   // Deprecated
-  Eigen::Vector3i searchClearVoxel(const Eigen::Vector3i& pt);
-  bool isInBoxes(const vector<pair<Vector3d, Vector3d>>& boxes, const Eigen::Vector3i& idx);
-  bool canBeMerged(const Frontier& ftr1, const Frontier& ftr2);
-  void findViewpoints(const Vector3d& sample, const Vector3d& ftr_avg, vector<Viewpoint>& vps);
-
+  Eigen::Vector3i searchClearVoxel(const Eigen::Vector3i &pt);
+  bool isInBoxes(const vector<pair<Vector3d, Vector3d>> &boxes,
+                 const Eigen::Vector3i &idx);
+  bool canBeMerged(const Frontier &ftr1, const Frontier &ftr2);
+  void findViewpoints(const Vector3d &sample, const Vector3d &ftr_avg,
+                      vector<Viewpoint> &vps);
+  Eigen::Vector4d getColor(const double &h, double alpha);
   // Data
   vector<char> frontier_flag_;
-  list<Frontier> frontiers_, dormant_frontiers_, tmp_frontiers_;
+  vector<Frontier> frontiers_, dormant_frontiers_, tmp_frontiers_;
   vector<int> removed_ids_;
-  list<Frontier>::iterator first_new_ftr_;
+  vector<int> removed_cluster_ids_;
+  int first_new_frt_;
+  vector<Frontier>::iterator first_new_ftr_;
+  int frts_num_after_remove_;
   Frontier next_frontier_;
+  vector<FrontierCluster> frontier_clusters_;
+  vector<checkPoint> check_tour;
 
   // Params
   int cluster_min_;
@@ -251,10 +203,69 @@ private:
   int down_sample_;
   double min_view_finish_fraction_, resolution_;
   int min_visib_num_, candidate_rnum_;
+  double division_ratio_;
+  string tsp_dir_;
+  double frt_cluster_radius_;
 
   // Utils
+  ros::Publisher debug_pts_, debug_marker_, debug_pts1_;
   shared_ptr<EDTEnvironment> edt_env_;
   unique_ptr<RayCaster> raycaster_;
+
+  //FUEL原生private变量和函数----------------------
+  // void splitLargeFrontiers(list<Frontier>& frontiers);
+  // bool splitHorizontally(const Frontier& frontier, list<Frontier>& splits);
+  // void mergeFrontiers(Frontier& ftr1, const Frontier& ftr2);
+  // bool isFrontierChanged(const Frontier& ft);
+  // bool haveOverlap(const Vector3d& min1, const Vector3d& max1, const Vector3d& min2,
+  //                  const Vector3d& max2);
+  // void computeFrontierInfo(Frontier& frontier);
+  // void downsample(const vector<Vector3d>& cluster_in, vector<Vector3d>& cluster_out);
+  // void sampleViewpoints(Frontier& frontier);
+
+  int countVisibleCells(const Vector3d& pos, const double& yaw, const vector<Vector3d>& cluster);
+  bool isNearUnknown(const Vector3d& pos);
+  // vector<Eigen::Vector3i> sixNeighbors(const Eigen::Vector3i& voxel);
+  // vector<Eigen::Vector3i> tenNeighbors(const Eigen::Vector3i& voxel);
+  // vector<Eigen::Vector3i> allNeighbors(const Eigen::Vector3i& voxel);
+  // bool isNeighborUnknown(const Eigen::Vector3i& voxel);
+  // void expandFrontier(const Eigen::Vector3i& first /* , const int& depth, const int& parent_id */);
+
+  // // Wrapper of sdf map
+  // int toadr(const Eigen::Vector3i& idx);
+  // bool knownfree(const Eigen::Vector3i& idx);
+  // bool inmap(const Eigen::Vector3i& idx);
+
+  // // Deprecated
+  // Eigen::Vector3i searchClearVoxel(const Eigen::Vector3i& pt);
+  // bool isInBoxes(const vector<pair<Vector3d, Vector3d>>& boxes, const Eigen::Vector3i& idx);
+  // bool canBeMerged(const Frontier& ftr1, const Frontier& ftr2);
+  // void findViewpoints(const Vector3d& sample, const Vector3d& ftr_avg, vector<Viewpoint>& vps);
+
+  // // Data
+  // vector<char> frontier_flag_;
+  // list<Frontier> frontiers_, dormant_frontiers_, tmp_frontiers_;
+  // vector<int> removed_ids_;
+  // list<Frontier>::iterator first_new_ftr_;
+  // Frontier next_frontier_;
+
+  // // Params
+  // int cluster_min_;
+  // double cluster_size_xy_, cluster_size_z_;
+  // double candidate_rmax_, candidate_rmin_, candidate_dphi_, min_candidate_dist_,
+  //     min_candidate_clearance_;
+  // int down_sample_;
+  // double min_view_finish_fraction_, resolution_;
+  // int min_visib_num_, candidate_rnum_;
+
+  // // Utils
+  // shared_ptr<EDTEnvironment> edt_env_;
+  // unique_ptr<RayCaster> raycaster_;
+  //------------------------------------------------------
+
+  
+
+  
 };
 
 }  // namespace fast_planner

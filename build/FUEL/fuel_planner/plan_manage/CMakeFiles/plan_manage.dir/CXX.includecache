@@ -19,6 +19,12 @@ list
 -
 utility
 -
+string
+-
+visualization_msgs/Marker.h
+-
+queue
+-
 
 /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/active_perception/include/active_perception/heading_planner.h
 vector
@@ -212,6 +218,24 @@ active_perception/heading_planner.h
 plan_manage/plan_container.hpp
 -
 ros/ros.h
+-
+
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager.cpp
+plan_env/raycast.h
+-
+plan_env/sdf_map.h
+-
+plan_manage/planner_manager.h
+-
+pcl/point_cloud.h
+-
+pcl/point_types.h
+-
+pcl_conversions/pcl_conversions.h
+-
+thread
+-
+visualization_msgs/Marker.h
 -
 
 /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp

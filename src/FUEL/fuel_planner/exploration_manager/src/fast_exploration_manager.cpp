@@ -96,7 +96,7 @@ int FastExplorationManager::planExploreMotion(
             << ", acc: " << acc.transpose() << std::endl;
 
   // Search frontiers and group them into clusters
-  frontier_finder_->searchFrontiers();
+  frontier_finder_->searchFrontiers(pos);
 
   double frontier_time = (ros::Time::now() - t1).toSec();
   t1 = ros::Time::now();

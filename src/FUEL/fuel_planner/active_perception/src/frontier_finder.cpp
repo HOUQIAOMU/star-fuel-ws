@@ -38,6 +38,10 @@ FrontierFinder::FrontierFinder(const EDTEnvironment::Ptr& edt, ros::NodeHandle& 
   nh.param("frontier/down_sample", down_sample_, -1);
   nh.param("frontier/min_visib_num", min_visib_num_, -1);
   nh.param("frontier/min_view_finish_fraction", min_view_finish_fraction_, -1.0);
+  
+  // 新增参数(等一下再添加)
+  // nh.param("frontier/tsp_dir_", tsp_dir_, std::string("null"));
+  // nh.param("frontier/frt_cluster_radius", frt_cluster_radius_, -1.0);
 
   raycaster_.reset(new RayCaster);
   resolution_ = edt_env_->sdf_map_->getResolution();
@@ -46,12 +50,13 @@ FrontierFinder::FrontierFinder(const EDTEnvironment::Ptr& edt, ros::NodeHandle& 
   raycaster_->setParams(resolution_, origin);
 
   percep_utils_.reset(new PerceptionUtils(nh));
+  first_new_frt_ = -1;
 }
 
 FrontierFinder::~FrontierFinder() {
 }
 
-void FrontierFinder::searchFrontiers() {
+void FrontierFinder::searchFrontiers(Eigen::Vector3d cur_pos) {
   ros::Time t1 = ros::Time::now();
   tmp_frontiers_.clear();
 
@@ -59,40 +64,65 @@ void FrontierFinder::searchFrontiers() {
   Vector3d update_min, update_max;
   edt_env_->sdf_map_->getUpdatedBox(update_min, update_max, true);
 
-  // Removed changed frontiers in updated map
-  auto resetFlag = [&](list<Frontier>::iterator& iter, list<Frontier>& frontiers) {
+  // Removed changed frontiers in updated map删除失效frontier
+  auto resetFlag = [&](int iter, vector<Frontier>& frontiers) {
+    // 消除重叠的frontier
     Eigen::Vector3i idx;
-    for (auto cell : iter->cells_) {
+    for (auto cell : frontiers[iter].cells_) {
       edt_env_->sdf_map_->posToIndex(cell, idx);
       frontier_flag_[toadr(idx)] = 0;
     }
-    iter = frontiers.erase(iter);
+    frontiers.erase(frontiers.begin() + iter);
   };
 
   std::cout << "Before remove: " << frontiers_.size() << std::endl;
 
   removed_ids_.clear();
+  removed_cluster_ids_.clear();
   int rmv_idx = 0;
-  for (auto iter = frontiers_.begin(); iter != frontiers_.end();) {
-    if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
-        isFrontierChanged(*iter)) {
+  // for (auto iter = frontiers_.begin(); iter != frontiers_.end();) {
+  //   if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
+  //       isFrontierChanged(*iter)) {
+  //     resetFlag(iter, frontiers_);
+  //     removed_ids_.push_back(rmv_idx);
+  //   } else {
+  //     ++rmv_idx;
+  //     ++iter;
+  //   }
+  // }
+  // 遍历现有frontier,消除重叠frontier
+  for(int iter = 0; iter<frontiers_.size(); ){
+    if (haveOverlap(frontiers_[iter].box_min_, frontiers_[iter].box_max_, update_min, update_max) &&
+        isFrontierChanged(frontiers_[iter])) {
       resetFlag(iter, frontiers_);
-      removed_ids_.push_back(rmv_idx);
-    } else {
+      removed_ids_.push_back(iter);
+    }
+    else{
       ++rmv_idx;
       ++iter;
     }
   }
+  frts_num_after_remove_ = frontiers_.size(); //记录删除失效frontier后剩余的frontier数量
   std::cout << "After remove: " << frontiers_.size() << std::endl;
-  for (auto iter = dormant_frontiers_.begin(); iter != dormant_frontiers_.end();) {
-    if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
-        isFrontierChanged(*iter))
+
+  // for (auto iter = dormant_frontiers_.begin(); iter != dormant_frontiers_.end();) {
+  //   if (haveOverlap(iter->box_min_, iter->box_max_, update_min, update_max) &&
+  //       isFrontierChanged(*iter))
+  //     resetFlag(iter, dormant_frontiers_);
+  //   else
+  //     ++iter;
+  // }
+  // 也遍历dormant_frontier（暂时休眠的区域，可能是区域中未探索完的frontiers），以消除重叠的dormant_frontier
+  for(int iter = 0; iter<dormant_frontiers_.size(); ){
+    if (haveOverlap(dormant_frontiers_[iter].box_min_, dormant_frontiers_[iter].box_max_, update_min, update_max) &&
+        isFrontierChanged(dormant_frontiers_[iter]))
       resetFlag(iter, dormant_frontiers_);
     else
       ++iter;
   }
 
   // Search new frontier within box slightly inflated from updated box
+  // 在包围盒的基础上稍微膨胀（这里和star参数不同，先保持fuel原参数）
   Vector3d search_min = update_min - Vector3d(1, 1, 0.5);
   Vector3d search_max = update_max + Vector3d(1, 1, 0.5);
   Vector3d box_min, box_max;
@@ -105,11 +135,16 @@ void FrontierFinder::searchFrontiers() {
   edt_env_->sdf_map_->posToIndex(search_min, min_id);
   edt_env_->sdf_map_->posToIndex(search_max, max_id);
 
+  ros::Time t2 = ros::Time::now();
+  int frts_pts_num = 0;
+  pcl::PointCloud<pcl::PointXYZ> cloud;
   for (int x = min_id(0); x <= max_id(0); ++x)
     for (int y = min_id(1); y <= max_id(1); ++y)
       for (int z = min_id(2); z <= max_id(2); ++z) {
         // Scanning the updated region to find seeds of frontiers
         Eigen::Vector3i cur(x, y, z);
+        Eigen::Vector3d pos;
+        edt_env_->sdf_map_->indexToPos(cur, pos);
         if (frontier_flag_[toadr(cur)] == 0 && knownfree(cur) && isNeighborUnknown(cur)) {
           // Expand from the seed cell to find a complete frontier cluster
           expandFrontier(cur);
@@ -163,8 +198,8 @@ void FrontierFinder::expandFrontier(
   }
 }
 
-void FrontierFinder::splitLargeFrontiers(list<Frontier>& frontiers) {
-  list<Frontier> splits, tmps;
+void FrontierFinder::splitLargeFrontiers(vector<Frontier>& frontiers) {
+  vector<Frontier> splits, tmps;
   for (auto it = frontiers.begin(); it != frontiers.end(); ++it) {
     // Check if each frontier needs to be split horizontally
     if (splitHorizontally(*it, splits)) {
@@ -176,7 +211,8 @@ void FrontierFinder::splitLargeFrontiers(list<Frontier>& frontiers) {
   frontiers = tmps;
 }
 
-bool FrontierFinder::splitHorizontally(const Frontier& frontier, list<Frontier>& splits) {
+// 利用pca进行切分
+bool FrontierFinder::splitHorizontally(const Frontier& frontier, vector<Frontier>& splits) {
   // Split a frontier into small piece if it is too large
   auto mean = frontier.average_.head<2>();
   bool need_split = false;
@@ -226,7 +262,7 @@ bool FrontierFinder::splitHorizontally(const Frontier& frontier, list<Frontier>&
   computeFrontierInfo(ftr2);
 
   // Recursive call to split frontier that is still too large
-  list<Frontier> splits2;
+  vector<Frontier> splits2;
   if (splitHorizontally(ftr1, splits2)) {
     splits.insert(splits.end(), splits2.begin(), splits2.end());
     splits2.clear();
@@ -286,43 +322,74 @@ void FrontierFinder::updateFrontierCostMatrix() {
   }
   std::cout << "" << std::endl;
 
-  auto updateCost = [](const list<Frontier>::iterator& it1, const list<Frontier>::iterator& it2) {
-    std::cout << "(" << it1->id_ << "," << it2->id_ << "), ";
+  auto updateCost = [](Frontier &ft1, Frontier &ft2) {
+    //std::cout << "(" << it1->id_ << "," << it2->id_ << "), ";
     // Search path from old cluster's top viewpoint to new cluster'
-    Viewpoint& vui = it1->viewpoints_.front();
-    Viewpoint& vuj = it2->viewpoints_.front();
+    Viewpoint& vui = ft1.viewpoints_.front();
+    Viewpoint& vuj = ft2.viewpoints_.front();
     vector<Vector3d> path_ij;
     double cost_ij = ViewNode::computeCost(
         vui.pos_, vuj.pos_, vui.yaw_, vuj.yaw_, Vector3d(0, 0, 0), 0, path_ij);
     // Insert item for both old and new clusters
-    it1->costs_.push_back(cost_ij);
-    it1->paths_.push_back(path_ij);
+    ft1.costs_.push_back(cost_ij);
+    ft1.paths_.push_back(path_ij);
     reverse(path_ij.begin(), path_ij.end());
-    it2->costs_.push_back(cost_ij);
-    it2->paths_.push_back(path_ij);
+    ft2.costs_.push_back(cost_ij);
+    ft2.paths_.push_back(path_ij);
   };
+
+  // 新增部分
+  auto updateCostbetweenNewFtrs = [=, &updateCost](vector<Frontier> &frontiers,
+                                                   int first_new_idx) {
+    for (int it1 = first_new_idx; it1 < frontiers.size(); ++it1)
+      for (int it2 = it1; it2 < frontiers.size(); ++it2) {
+        if (it1 == it2) {
+          frontiers[it1].costs_.push_back(0);
+          frontiers[it1].paths_.push_back({});
+        } else
+          updateCost(frontiers[it1], frontiers[it2]);
+      }
+  };
+
+  if (!removed_ids_.empty()) {
+    // Delete path and cost for removed clusters
+    for (int it = 0; it < frts_num_after_remove_; ++it) {
+      for (int i = 0; i < removed_ids_.size(); ++i) {
+        int iter_idx = 0;
+        auto cost_iter = frontiers_[it].costs_.begin();
+        auto path_iter = frontiers_[it].paths_.begin();
+        // Step iterator to the item to be removed
+        while (iter_idx < removed_ids_[i]) {
+          ++cost_iter;
+          ++path_iter;
+          ++iter_idx;
+        }
+        frontiers_[it].costs_.erase(cost_iter);
+        frontiers_[it].paths_.erase(path_iter);
+      }
+      std::cout << "(" << frontiers_[it].costs_.size() << ","
+                << frontiers_[it].paths_.size() << "), ";
+    }
+    removed_ids_.clear();
+  }
+  if (first_new_frt_ == -1) // not add any new frontier in this calculation
+    return;
+
+  //-----------------------------------
 
   std::cout << "cost mat add: " << std::endl;
   // Compute path and cost between old and new clusters
-  for (auto it1 = frontiers_.begin(); it1 != first_new_ftr_; ++it1)
-    for (auto it2 = first_new_ftr_; it2 != frontiers_.end(); ++it2)
-      updateCost(it1, it2);
+  for (int it1 = 0; it1 < first_new_frt_; ++it1)
+    for (auto it2 = first_new_frt_; it2 < frontiers_.size(); ++it2)
+      updateCost(frontiers_[it1], frontiers_[it2]);
 
   // Compute path and cost between new clusters
-  for (auto it1 = first_new_ftr_; it1 != frontiers_.end(); ++it1)
-    for (auto it2 = it1; it2 != frontiers_.end(); ++it2) {
-      if (it1 == it2) {
-        std::cout << "(" << it1->id_ << "," << it2->id_ << "), ";
-        it1->costs_.push_back(0);
-        it1->paths_.push_back({});
-      } else
-        updateCost(it1, it2);
-    }
-  std::cout << "" << std::endl;
-  std::cout << "cost mat size final: " << std::endl;
-  for (auto ftr : frontiers_)
-    std::cout << "(" << ftr.costs_.size() << "," << ftr.paths_.size() << "), ";
-  std::cout << "" << std::endl;
+  updateCostbetweenNewFtrs(frontiers_, first_new_frt_);
+  // std::cout << "" << std::endl;
+  // std::cout << "cost mat size final: " << std::endl;
+  // for (auto ftr : frontiers_)
+  //   std::cout << "(" << ftr.costs_.size() << "," << ftr.paths_.size() << "), ";
+  // std::cout << "" << std::endl;
 }
 
 void FrontierFinder::mergeFrontiers(Frontier& ftr1, const Frontier& ftr2) {
@@ -391,6 +458,7 @@ void FrontierFinder::computeFrontierInfo(Frontier& ftr) {
 
 void FrontierFinder::computeFrontiersToVisit() {
   first_new_ftr_ = frontiers_.end();
+  first_new_frt_ = -1;
   int new_num = 0;
   int new_dormant_num = 0;
   // Try find viewpoints for each cluster and categorize them according to viewpoint number
@@ -399,7 +467,7 @@ void FrontierFinder::computeFrontiersToVisit() {
     sampleViewpoints(tmp_ftr);
     if (!tmp_ftr.viewpoints_.empty()) {
       ++new_num;
-      list<Frontier>::iterator inserted = frontiers_.insert(frontiers_.end(), tmp_ftr);
+      vector<Frontier>::iterator inserted = frontiers_.insert(frontiers_.end(), tmp_ftr);
       // Sort the viewpoints by coverage fraction, best view in front
       sort(
           inserted->viewpoints_.begin(), inserted->viewpoints_.end(),
@@ -508,7 +576,7 @@ void FrontierFinder::getFrontierBoxes(vector<pair<Eigen::Vector3d, Eigen::Vector
 void FrontierFinder::getPathForTour(
     const Vector3d& pos, const vector<int>& frontier_ids, vector<Vector3d>& path) {
   // Make an frontier_indexer to access the frontier list easier
-  vector<list<Frontier>::iterator> frontier_indexer;
+  vector<vector<Frontier>::iterator> frontier_indexer;
   for (auto it = frontiers_.begin(); it != frontiers_.end(); ++it)
     frontier_indexer.push_back(it);
 
@@ -698,7 +766,7 @@ bool FrontierFinder::isFrontierCovered() {
   Vector3d update_min, update_max;
   edt_env_->sdf_map_->getUpdatedBox(update_min, update_max);
 
-  auto checkChanges = [&](const list<Frontier>& frontiers) {
+  auto checkChanges = [&](const vector<Frontier>& frontiers) {
     for (auto ftr : frontiers) {
       if (!haveOverlap(ftr.box_min_, ftr.box_max_, update_min, update_max)) continue;
       const int change_thresh = min_view_finish_fraction_ * ftr.cells_.size();

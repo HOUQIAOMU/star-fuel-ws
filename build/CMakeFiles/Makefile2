@@ -66,7 +66,6 @@ all: FUEL/fuel_planner/bspline_opt/all
 all: FUEL/fuel_planner/poly_traj/all
 all: FUEL/uav_simulator/poscmd_2_odom/all
 all: FUEL/uav_simulator/Utils/pose_utils/all
-all: FUEL/fuel_planner/exploration_data/all
 all: FUEL/uav_simulator/so3_disturbance_generator/all
 all: FUEL/uav_simulator/Utils/odom_visualization/all
 all: FUEL/uav_simulator/local_sensing/all
@@ -96,7 +95,6 @@ preinstall: FUEL/fuel_planner/bspline_opt/preinstall
 preinstall: FUEL/fuel_planner/poly_traj/preinstall
 preinstall: FUEL/uav_simulator/poscmd_2_odom/preinstall
 preinstall: FUEL/uav_simulator/Utils/pose_utils/preinstall
-preinstall: FUEL/fuel_planner/exploration_data/preinstall
 preinstall: FUEL/uav_simulator/so3_disturbance_generator/preinstall
 preinstall: FUEL/uav_simulator/Utils/odom_visualization/preinstall
 preinstall: FUEL/uav_simulator/local_sensing/preinstall
@@ -131,7 +129,6 @@ clean: FUEL/fuel_planner/bspline_opt/clean
 clean: FUEL/fuel_planner/poly_traj/clean
 clean: FUEL/uav_simulator/poscmd_2_odom/clean
 clean: FUEL/uav_simulator/Utils/pose_utils/clean
-clean: FUEL/fuel_planner/exploration_data/clean
 clean: FUEL/uav_simulator/so3_disturbance_generator/clean
 clean: FUEL/uav_simulator/Utils/odom_visualization/clean
 clean: FUEL/uav_simulator/local_sensing/clean
@@ -213,24 +210,6 @@ FUEL/fuel_planner/bspline_opt/preinstall:
 FUEL/fuel_planner/bspline_opt/clean: FUEL/fuel_planner/bspline_opt/CMakeFiles/bspline_opt.dir/clean
 
 .PHONY : FUEL/fuel_planner/bspline_opt/clean
-
-#=============================================================================
-# Directory level rules for directory FUEL/fuel_planner/exploration_data
-
-# Recursive "all" directory target.
-FUEL/fuel_planner/exploration_data/all:
-
-.PHONY : FUEL/fuel_planner/exploration_data/all
-
-# Recursive "preinstall" directory target.
-FUEL/fuel_planner/exploration_data/preinstall:
-
-.PHONY : FUEL/fuel_planner/exploration_data/preinstall
-
-# Recursive "clean" directory target.
-FUEL/fuel_planner/exploration_data/clean:
-
-.PHONY : FUEL/fuel_planner/exploration_data/clean
 
 #=============================================================================
 # Directory level rules for directory FUEL/fuel_planner/exploration_manager

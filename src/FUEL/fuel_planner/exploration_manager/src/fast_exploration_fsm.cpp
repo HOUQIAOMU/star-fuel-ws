@@ -280,7 +280,7 @@ void FastExplorationFSM::frontierCallback(const ros::TimerEvent& e) {
   if (state_ == WAIT_TRIGGER || state_ == FINISH) {
     auto ft = expl_manager_->frontier_finder_;
     auto ed = expl_manager_->ed_;
-    ft->searchFrontiers();
+    ft->searchFrontiers(fd_->start_pt_);
     ft->computeFrontiersToVisit();
     ft->updateFrontierCostMatrix();
 

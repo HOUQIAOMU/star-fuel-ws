@@ -1,0 +1,135 @@
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_StatusData
+[  0%] Built target geometry_msgs_generate_messages_py
+[  0%] Built target nav_msgs_generate_messages_py
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_Odometry
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_LQRTrajectory
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_AuxCommand
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_Corrections
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_Gains
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_OutputData
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_PositionCommand
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_PPROutputData
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_Serial
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_PolynomialTrajectory
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_SO3Command
+[  0%] Built target _quadrotor_msgs_generate_messages_check_deps_TRPYCommand
+[  3%] Built target quadrotor_msgs_generate_messages_py
+[  3%] Built target nav_msgs_generate_messages_nodejs
+[  3%] Built target geometry_msgs_generate_messages_nodejs
+[  7%] Built target quadrotor_msgs_generate_messages_nodejs
+[  7%] Built target nav_msgs_generate_messages_cpp
+[  7%] Built target geometry_msgs_generate_messages_cpp
+[ 10%] Built target quadrotor_msgs_generate_messages_cpp
+[ 10%] Built target nav_msgs_generate_messages_eus
+[ 10%] Built target geometry_msgs_generate_messages_eus
+[ 13%] Built target quadrotor_msgs_generate_messages_eus
+[ 13%] Built target nav_msgs_generate_messages_lisp
+[ 13%] Built target geometry_msgs_generate_messages_lisp
+[ 16%] Built target quadrotor_msgs_generate_messages_lisp
+[ 16%] Built target quadrotor_msgs_generate_messages
+[ 16%] Built target encode_msgs
+[ 17%] Built target decode_msgs
+[ 43%] Built target lkh_tsp
+[ 70%] Built target lkh_tsp_solver
+[ 70%] Built target click_map
+[ 71%] Built target random_forest
+[ 71%] Built target map_recorder
+[ 72%] Built target map_pub
+[ 73%] Built target obj_generator
+[ 74%] Built target plan_env
+[ 74%] Built target _bspline_generate_messages_check_deps_Bspline
+[ 74%] Built target std_msgs_generate_messages_nodejs
+[ 74%] Built target bspline_generate_messages_nodejs
+[ 74%] Built target std_msgs_generate_messages_cpp
+[ 74%] Built target bspline_generate_messages_cpp
+[ 74%] Built target std_msgs_generate_messages_py
+[ 75%] Built target bspline_generate_messages_py
+[ 75%] Built target std_msgs_generate_messages_eus
+[ 76%] Built target bspline_generate_messages_eus
+[ 76%] Built target std_msgs_generate_messages_lisp
+[ 76%] Built target bspline_generate_messages_lisp
+[ 76%] Built target bspline_generate_messages
+[ 77%] Built target bspline
+[ 78%] Built target path_searching
+[ 79%] Built target active_perception
+[ 79%] Built target bspline_opt
+[ 79%] Built target poly_traj
+[ 80%] Built target poscmd_2_odom
+[ 80%] Built target pose_utils
+[ 80%] Built target so3_disturbance_generator
+[ 80%] Built target odom_visualization
+[ 81%] Built target pcl_render_node
+[ 81%] Built target SO3Control
+[ 82%] Built target so3_control_nodelet
+[ 82%] Built target multi_map_visualization
+[ 82%] Built target _multi_map_server_generate_messages_check_deps_VerticalOccupancyGridList
+[ 82%] Built target _multi_map_server_generate_messages_check_deps_MultiOccupancyGrid
+[ 82%] Built target _multi_map_server_generate_messages_check_deps_SparseMap3D
+[ 82%] Built target _multi_map_server_generate_messages_check_deps_MultiSparseMap3D
+[ 83%] Built target multi_map_server_generate_messages_lisp
+[ 83%] Built target multi_map_server_generate_messages_nodejs
+[ 85%] Built target multi_map_server_generate_messages_eus
+[ 86%] Built target multi_map_server_generate_messages_cpp
+[ 88%] Built target multi_map_server_generate_messages_py
+[ 88%] Built target multi_map_server_generate_messages
+[ 89%] Built target process_msg
+[ 89%] Built target traj_utils
+[ 89%] Built target proc_msg2
+[ 90%] Built target proc_msg
+[ 91%] Built target traj_server
+[ 91%] Building CXX object FUEL/fuel_planner/plan_manage/CMakeFiles/plan_manage.dir/src/planner_manager_dev.cpp.o
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp: In member function ‘void fast_planner::FastPlannerManager::planYawActMap(const Vector3d&)’:
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:65:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<double>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   65 |   for (int i = 0; i < path.size(); ++i) {
+      |                   ~~^~~~~~~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:12:10: warning: unused variable ‘t_traj’ [-Wunused-variable]
+   12 |   double t_traj = local_data_.duration_;
+      |          ^~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:31:8: warning: unused variable ‘unmapped’ [-Wunused-variable]
+   31 |   bool unmapped = false;
+      |        ^~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp: In member function ‘void fast_planner::FastPlannerManager::searchFrontier(const Vector3d&)’:
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:117:38: error: no matching function for call to ‘fast_planner::FrontierFinder::searchFrontiers(const Vector3d&)’
+  117 |   frontier_finder_->searchFrontiers(p);
+      |                                      ^
+In file included from /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/include/plan_manage/planner_manager.h:14,
+                 from /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:1:
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/active_perception/include/active_perception/frontier_finder.h:81:8: note: candidate: ‘void fast_planner::FrontierFinder::searchFrontiers()’
+   81 |   void searchFrontiers();
+      |        ^~~~~~~~~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/active_perception/include/active_perception/frontier_finder.h:81:8: note:   candidate expects 0 arguments, 1 provided
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp: In member function ‘void fast_planner::FastPlannerManager::test()’:
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:125:7: warning: unused variable ‘vid’ [-Wunused-variable]
+  125 |   int vid = 0;
+      |       ^~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp: In member function ‘bool fast_planner::FastPlannerManager::localExplore(Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d, Eigen::Vector3d)’:
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:170:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Eigen::Matrix<double, 3, 1> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  170 |     for (int i = 0; i < points.size(); ++i) {
+      |                     ~~^~~~~~~~~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:207:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Eigen::Matrix<double, 3, 1> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  207 |     for (int i = 0; i < points.size(); ++i) {
+      |                     ~~^~~~~~~~~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:227:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Eigen::Matrix<double, 3, 1> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  227 |     for (int i = 0; i < points.size(); ++i) {
+      |                     ~~^~~~~~~~~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:298:21: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<Eigen::Matrix<double, 3, 1> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  298 |   for (int i = 0; i < pts.size(); ++i) {
+      |                   ~~^~~~~~~~~~~~
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/plan_manage/src/planner_manager_dev.cpp:260:7: warning: unused variable ‘ctrl_pt_num’ [-Wunused-variable]
+  260 |   int ctrl_pt_num = seg_num + 3;
+      |       ^~~~~~~~~~~
+make[2]: *** [FUEL/fuel_planner/plan_manage/CMakeFiles/plan_manage.dir/build.make:76: FUEL/fuel_planner/plan_manage/CMakeFiles/plan_manage.dir/src/planner_manager_dev.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:5784: FUEL/fuel_planner/plan_manage/CMakeFiles/plan_manage.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2
+Base path: /home/jacob/star_fuel_ws
+Source space: /home/jacob/star_fuel_ws/src
+Build space: /home/jacob/star_fuel_ws/build
+Devel space: /home/jacob/star_fuel_ws/devel
+Install space: /home/jacob/star_fuel_ws/install
+####
+#### Running command: "make cmake_check_build_system" in "/home/jacob/star_fuel_ws/build"
+####
+####
+#### Running command: "make -j1 -l1" in "/home/jacob/star_fuel_ws/build"
+####
+Invoking "make -j1 -l1" failed

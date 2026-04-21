@@ -11,6 +11,10 @@
 #include <visualization_msgs/Marker.h>
 #include <queue>
 
+#include <pcl/features/normal_3d.h>
+#include <pcl/features/normal_3d_omp.h>
+#include <pcl_conversions/pcl_conversions.h>
+
 using Eigen::Vector3d;
 using std::shared_ptr;
 using std::unique_ptr;
@@ -53,6 +57,12 @@ struct Frontier {
   // Path and cost from this cluster to other clusters
   vector<vector<Vector3d>> paths_;
   vector<double> costs_;
+
+  // 新增
+  int clu_id_;
+  int type_;
+  bool divided;
+  Vector3d normal_;
 };
 
 // frontier组成的簇cluster，包含frontier列表，cluster中心，连接成本
@@ -84,8 +94,7 @@ public:
 
   void searchFrontiers(Eigen::Vector3d cur_pos);
   // void searchFrontiers();
-  //void computeFrontiersToVisit(Eigen::Vector3d cur_pos);
-  void computeFrontiersToVisit();
+  void computeFrontiersToVisit(Eigen::Vector3d cur_pos);
   void computeNormal(const vector<Vector3d> &point_cloud,
                      vector<Vector3d> &normals, Vector3d center);
   
@@ -109,8 +118,8 @@ public:
   void updateFrontierCostMatrix();
   void getFullCostMatrix(const Vector3d& cur_pos, const Vector3d& cur_vel, const Vector3d cur_yaw,
                          Eigen::MatrixXd& mat);
-  void getPathForTour(const Vector3d& pos, const vector<int>& frontier_ids, vector<Vector3d>& path);
-
+  //void getPathForTour(const Vector3d& pos, const vector<int>& frontier_ids, vector<Vector3d>& path);
+  void getPathForTour(const Vector3d &pos, const vector<int> &tsp_ids, vector<Vector3d> &path);
   void setNextFrontier(const int& id);
   bool isFrontierCovered();
   void wrapYaw(double& yaw);

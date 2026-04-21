@@ -7,11 +7,19 @@
 #IncludeRegexTransform: 
 
 /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/path_searching/include/path_searching/astar2.h
+plan_env/edt_environment.h
+/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/path_searching/include/path_searching/plan_env/edt_environment.h
 Eigen/Eigen
+-
+boost/functional/hash.hpp
 -
 iostream
 -
 map
+-
+path_searching/matrix_hash.h
+-
+queue
 -
 ros/console.h
 -
@@ -21,13 +29,7 @@ string
 -
 unordered_map
 -
-plan_env/edt_environment.h
-/home/jacob/star_fuel_ws/src/FUEL/fuel_planner/path_searching/include/path_searching/plan_env/edt_environment.h
-boost/functional/hash.hpp
--
-queue
--
-path_searching/matrix_hash.h
+visualization_msgs/MarkerArray.h
 -
 
 /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/path_searching/include/path_searching/kinodynamic_astar.h
@@ -67,9 +69,9 @@ random
 /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/path_searching/src/astar2.cpp
 path_searching/astar2.h
 -
-sstream
--
 plan_env/sdf_map.h
+-
+sstream
 -
 
 /home/jacob/star_fuel_ws/src/FUEL/fuel_planner/path_searching/src/kinodynamic_astar.cpp
@@ -936,6 +938,24 @@ std_msgs/ColorRGBA.h
 geometry_msgs/Point.h
 -
 std_msgs/ColorRGBA.h
+-
+
+/opt/ros/noetic/include/visualization_msgs/MarkerArray.h
+string
+-
+vector
+-
+memory
+-
+ros/types.h
+-
+ros/serialization.h
+-
+ros/builtin_message_traits.h
+-
+ros/message_operations.h
+-
+visualization_msgs/Marker.h
 -
 
 /opt/ros/noetic/include/xmlrpcpp/XmlRpcDecl.h

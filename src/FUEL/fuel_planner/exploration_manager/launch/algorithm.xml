@@ -99,7 +99,14 @@
     <param name="exploration/w_dir" value="1.5" type="double"/>
     <param name="exploration/tsp_dir" value="$(find lkh_tsp_solver)/resource" type="string"/>
     <param name="exploration/relax_time" value="1.0" type="double"/>
+    <!--新增参数-->
+    <param name="exploration/alc_cp_search_range" value="10" type="int" />
+    <param name="exploration/alc_cost_scale" value="-1.0" type="double" />
+    <!--param name="exploration/perception_aware_local" value="$(arg use_perception_aware_local_planner)" type="bool" /-->
+    <param name="exploration/feature_max_dist" value="2.0" type="double" />
+    <param name="exploration/inertial_cost_offset" value="5.0" type="double" />
 
+    
     <param name="frontier/cluster_min" value="100" type="int"/>
     <param name="frontier/cluster_size_xy" value="2.0" type="double"/>
     <param name="frontier/cluster_size_z" value="10.0" type="double"/>
@@ -112,6 +119,11 @@
     <param name="frontier/down_sample" value="3" type="int"/>;
     <param name="frontier/min_visib_num" value="15" type="int"/>;
     <param name="frontier/min_view_finish_fraction" value="0.2" type="double"/>;
+    <!--新增参数-->
+    <param name="frontier/tsp_dir" value="$(find lkh_tsp_solver)/resource" type="string" />
+    <param name="frontier/frt_cluster_radius" value="3.0" type="double" />
+
+
 
     <!-- Perception utils -->
     <param name="perception_utils/top_angle" value="0.56125" type="double"/>;
